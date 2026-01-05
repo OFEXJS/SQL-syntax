@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import './App.css';
 import { executeSQL, formatSQL, getSchema } from './sql-parser';
+import D3Background from './D3Background';
 
 function App() {
   const [sqlQuery, setSqlQuery] = useState<string>('SELECT * FROM users;');
@@ -111,6 +112,7 @@ function App() {
 
   return (
     <div className="app">
+      <D3Background />
       <div className="container">
         <div className="editor-panel">
           <div className="editor-header">
