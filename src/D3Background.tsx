@@ -1,146 +1,142 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
+type CircleData = {
+  id: number;
+  cx: number;
+  cy: number;
+  radius: number;
+  color: string;
+  opacity: number;
+  speedX: number;
+  speedY: number;
+  pulseSpeed: number;
+};
+
 const D3Background: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     if (!svgRef.current) return;
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const numCircles = 50;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    const numCircles = 30;
 
-    // 设置SVG尺寸
-    const svg = d3.select(svgRef.current)
+    const svg = d3
+      .select(svgRef.current)
       .attr('width', width)
       .attr('height', height);
 
-    // 创建渐变背景
+    /* ---------------- 背景渐变 ---------------- */
     const defs = svg.append('defs');
-    
-    // 主渐变
-    defs.append('linearGradient')
-      .attr('id', 'background-gradient')
+
+    const gradient = defs
+      .append('linearGradient')
+      .attr('id', 'bg-gradient')
       .attr('x1', '0%')
       .attr('y1', '0%')
       .attr('x2', '100%')
-      .attr('y2', '100%')
-      .selectAll('stop')
-      .data([
-        { offset: '0%', color: '#0f172a' },
-        { offset: '100%', color: '#1e293b' }
-      ])
-      .enter().append('stop')
-      .attr('offset', d => d.offset)
-      .attr('stop-color', d => d.color);
+      .attr('y2', '100%');
 
-    // 绘制背景矩形
-    svg.append('rect')
+    gradient
+      .append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', '#0f172a');
+
+    gradient
+      .append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', '#1e293b');
+
+    svg
+      .append('rect')
       .attr('width', width)
       .attr('height', height)
-      .attr('fill', 'url(#background-gradient)');
+      .attr('fill', 'url(#bg-gradient)');
 
-    // 创建动态圆组
-    const circles = svg.append('g')
-      .attr('class', 'circles');
-
-    // 生成随机圆数据
-    const circleData = Array.from({ length: numCircles }, (_, i) => ({
-      id: i,
-      cx: Math.random() * width,
-      cy: Math.random() * height,
-      radius: Math.random() * 30 + 10,
-      color: `hsl(${Math.random() * 360}, 70%, 60%)`,
-      opacity: Math.random() * 0.5 + 0.1,
-      speedX: (Math.random() - 0.5) * 0.5,
-      speedY: (Math.random() - 0.5) * 0.5,
-      pulseSpeed: Math.random() * 0.02 + 0.01
-    }));
-
-    // 创建圆元素
-    circles.selectAll('circle')
-      .data(circleData)
-      .enter().append('circle')
-      .attr('cx', d => d.cx)
-      .attr('cy', d => d.cy)
-      .attr('r', d => d.radius)
-      .attr('fill', d => d.color)
-      .attr('opacity', d => d.opacity)
-      .attr('class', 'animated-circle');
-
-    // 为每个圆添加光晕效果
-    const filters = defs.selectAll('filter')
-      .data(circleData)
-      .enter().append('filter')
-      .attr('id', d => `glow-${d.id}`)
+    /* ---------------- Glow Filter（共享） ---------------- */
+    const glow = defs
+      .append('filter')
+      .attr('id', 'glow')
       .attr('x', '-50%')
       .attr('y', '-50%')
       .attr('width', '200%')
       .attr('height', '200%');
 
-    filters.append('feGaussianBlur')
-      .attr('stdDeviation', 10)
-      .attr('result', 'coloredBlur');
+    glow
+      .append('feGaussianBlur')
+      .attr('stdDeviation', 12)
+      .attr('result', 'blur');
 
-    const merge = filters.append('feMerge');
-    merge.append('feMergeNode')
-      .attr('in', 'coloredBlur');
-    merge.append('feMergeNode')
-      .attr('in', 'SourceGraphic');
+    const merge = glow.append('feMerge');
+    merge.append('feMergeNode').attr('in', 'blur');
+    merge.append('feMergeNode').attr('in', 'SourceGraphic');
 
-    // 应用光晕效果
-    circles.selectAll('circle')
-      .attr('filter', d => `url(#glow-${d.id})`);
+    /* ---------------- 圆数据 ---------------- */
+    const circleData: CircleData[] = Array.from(
+      { length: numCircles },
+      (_, i) => ({
+        id: i,
+        cx: Math.random() * width,
+        cy: Math.random() * height,
+        radius: Math.random() * 25 + 10,
+        color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+        opacity: Math.random() * 0.4 + 0.2,
+        speedX: (Math.random() - 0.5) * 0.4,
+        speedY: (Math.random() - 0.5) * 0.4,
+        pulseSpeed: Math.random() * 0.002 + 0.001,
+      })
+    );
 
-    // 动画函数
-    const animate = () => {
-      circles.selectAll('circle')
-        .data(circleData)
-        .attr('cx', d => {
+    /* ---------------- 圆元素 ---------------- */
+    const circlesGroup = svg.append('g').attr('class', 'circles');
+
+    const circles = circlesGroup
+      .selectAll('circle')
+      .data(circleData)
+      .enter()
+      .append('circle')
+      .attr('r', d => d.radius)
+      .attr('fill', d => d.color)
+      .attr('opacity', d => d.opacity)
+      .attr('filter', 'url(#glow)')
+      .attr('transform', d => `translate(${d.cx}, ${d.cy})`);
+
+    /* ---------------- 动画（d3.timer） ---------------- */
+    const timer = d3.timer((elapsed) => {
+      circles
+        .attr('transform', d => {
           d.cx += d.speedX;
-          if (d.cx < 0 || d.cx > width) d.speedX *= -1;
-          return d.cx;
-        })
-        .attr('cy', d => {
           d.cy += d.speedY;
+
+          if (d.cx < 0 || d.cx > width) d.speedX *= -1;
           if (d.cy < 0 || d.cy > height) d.speedY *= -1;
-          return d.cy;
+
+          return `translate(${d.cx}, ${d.cy})`;
         })
-        .attr('r', d => {
-          // 脉动效果
-          return d.radius + Math.sin(Date.now() * d.pulseSpeed) * 5;
-        });
+        .attr('r', d =>
+          d.radius + Math.sin(elapsed * d.pulseSpeed) * 4
+        );
+    });
 
-      requestAnimationFrame(animate);
-    };
-
-    // 开始动画
-    animate();
-
-    // 窗口大小变化处理
+    /* ---------------- Resize ---------------- */
     const handleResize = () => {
-      const newWidth = window.innerWidth;
-      const newHeight = window.innerHeight;
+      width = window.innerWidth;
+      height = window.innerHeight;
 
-      svg.attr('width', newWidth)
-        .attr('height', newHeight);
+      svg.attr('width', width).attr('height', height);
 
       svg.select('rect')
-        .attr('width', newWidth)
-        .attr('height', newHeight);
-
-      // 更新边界检查
-      circleData.forEach(d => {
-        if (d.cx > newWidth) d.cx = newWidth;
-        if (d.cy > newHeight) d.cy = newHeight;
-      });
+        .attr('width', width)
+        .attr('height', height);
     };
 
     window.addEventListener('resize', handleResize);
 
-    // 清理函数
+    /* ---------------- Cleanup ---------------- */
     return () => {
+      timer.stop();
       window.removeEventListener('resize', handleResize);
       svg.selectAll('*').remove();
     };
@@ -152,12 +148,13 @@ const D3Background: React.FC = () => {
       className="d3-background"
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
+        inset: 0,
         width: '100%',
         height: '100%',
         zIndex: -1,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        willChange: 'transform',
+        transform: 'translateZ(0)',
       }}
     />
   );

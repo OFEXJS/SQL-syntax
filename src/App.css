@@ -8,12 +8,15 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background: transparent;
+  position: relative;
+  z-index: 1;
 }
 
 h1 {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #2c3e50;
+  color: #e2e8f0;
 }
 
 .container {
@@ -21,15 +24,20 @@ h1 {
   flex: 1;
   gap: 1rem;
   height: calc(100vh - 80px);
+  background: transparent;
 }
 
 .editor-panel, .result-panel {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #f8f9fa;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 1rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  border-radius: 8px;
 }
 
 .editor-header {
@@ -41,7 +49,7 @@ h1 {
 
 .editor-header h2, .result-panel h2 {
   margin: 0;
-  color: #34495e;
+  color: #e2e8f0;
 }
 
 .button-group {
@@ -116,11 +124,15 @@ h1 {
   padding: 1rem;
   font-family: 'Courier New', monospace;
   font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
   resize: none;
-  background-color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   line-height: 1.5;
+  color: #e2e8f0;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .result-table {
@@ -132,35 +144,43 @@ h1 {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
-  background-color: white;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .result-table th {
-  background-color: #34495e;
-  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  color: #e2e8f0;
   padding: 0.5rem;
   text-align: left;
   position: sticky;
   top: 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .result-table td {
   padding: 0.5rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
 }
 
 .result-table tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .result-table tr:hover {
-  background-color: #f5f5f5;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .result-info {
   margin-top: 0.5rem;
   text-align: center;
-  color: #7f8c8d;
+  color: #94a3b8;
   font-style: italic;
 }
 
@@ -169,49 +189,59 @@ h1 {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #95a5a6;
+  color: #94a3b8;
   font-style: italic;
 }
 
 .error {
-  background-color: #fadbd8;
-  color: #c0392b;
+  background: rgba(239, 68, 68, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fecaca;
   padding: 1rem;
-  border-radius: 4px;
-  border-left: 4px solid #e74c3c;
+  border-radius: 8px;
+  border-left: 4px solid #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .success {
-  background-color: #d4edda;
-  color: #155724;
+  background: rgba(16, 185, 129, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #d1fae5;
   padding: 1rem;
-  border-radius: 4px;
-  border-left: 4px solid #28a745;
+  border-radius: 8px;
+  border-left: 4px solid #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .schema-panel {
   margin-top: 1rem;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 .schema-panel h2 {
   margin: 0 0 0.5rem 0;
-  color: #34495e;
+  color: #e2e8f0;
 }
 
 .schema-panel h3 {
   margin: 0.5rem 0;
-  color: #2c3e50;
+  color: #cbd5e1;
 }
 
 .schema-panel ul {
   list-style-type: disc;
   padding-left: 1.5rem;
   margin: 0;
+  color: #e2e8f0;
 }
 
 .schema-content {
@@ -238,7 +268,9 @@ h1 {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -251,9 +283,12 @@ h1 {
   width: 90%;
   max-width: 1000px;
   max-height: 80vh;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
   overflow: hidden;
   top: 10vh;
   left: 50%;
@@ -262,14 +297,17 @@ h1 {
 
 /* 弹窗头部 - 可拖拽 */
 .modal-header {
-  background-color: #34495e;
-  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #e2e8f0;
   padding: 0.8rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: move;
   user-select: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .modal-header h3 {
@@ -309,37 +347,76 @@ h1 {
   overflow-y: auto;
 }
 
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Firefox滚动条样式 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
+}
+
 /* 教程表格样式 */
 .tutorial-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .tutorial-table th {
-  background-color: #3498db;
-  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  color: #e2e8f0;
   padding: 12px;
   text-align: left;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .tutorial-table td {
   padding: 12px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   vertical-align: top;
+  color: #cbd5e1;
 }
 
 .tutorial-table tr:nth-child(even) {
-  background-color: #f8f9fa;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tutorial-table tr:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .tutorial-table code {
-  background-color: #f1f1f1;
-  padding: 2px 6px;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  padding: 8px 12px;
+  border-radius: 6px;
   font-family: 'Courier New', monospace;
   font-size: 13px;
   display: block;
   margin-top: 8px;
   white-space: pre-wrap;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
